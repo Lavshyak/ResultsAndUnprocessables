@@ -36,7 +36,6 @@ your .csproj
 
 Controller example:
 ```
-[EnableCors]
 [ApiController]
 [Route("[controller]/[action]")]
 public class DevController : ControllerBase
