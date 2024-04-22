@@ -1,5 +1,6 @@
 # LAVSHYAK.AspNet.MVC.ResultsAndUnprocessables
-Either analog for endpoints. Auto swagger documentation
+Either analog for endpoints. Auto swagger documentation.
+Returns 200 + model in body if succes. 422 + error info in body if unprocessable.
 
 AddControllers setup example on configuring builder:
 ```
