@@ -1,6 +1,17 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LAVSHYAK.AspNet.MVC.ResultsAndUnprocessables", "LAVSHYAK.AspNet.MVC.ResultsAndUnprocessables.csproj", "{6D2CEC69-5868-4F7E-A61D-7BB7C131A5AE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LAVSHYAK.AspNet.MVC.ResultsAndUnprocessables", "src/LAVSHYAK.AspNet.MVC.ResultsAndUnprocessables/LAVSHYAK.AspNet.MVC.ResultsAndUnprocessables.csproj", "{6D2CEC69-5868-4F7E-A61D-7BB7C131A5AE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{B5B91CBC-6CD3-4DCE-93F4-216F35A0021A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "demo", "demo", "{8DF31F3E-E3B8-4F25-BD5C-A76BD4FD5A09}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "root", "root", "{6818BF07-B62F-4A0C-9404-5CDC5B29ECCD}"
+	ProjectSection(SolutionItems) = preProject
+		LICENSE = LICENSE
+		README.md = README.md
+		.gitignore = .gitignore
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -12,5 +23,10 @@ Global
 		{6D2CEC69-5868-4F7E-A61D-7BB7C131A5AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6D2CEC69-5868-4F7E-A61D-7BB7C131A5AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6D2CEC69-5868-4F7E-A61D-7BB7C131A5AE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{6D2CEC69-5868-4F7E-A61D-7BB7C131A5AE} = {B5B91CBC-6CD3-4DCE-93F4-216F35A0021A}
+		{B5B91CBC-6CD3-4DCE-93F4-216F35A0021A} = {6818BF07-B62F-4A0C-9404-5CDC5B29ECCD}
+		{8DF31F3E-E3B8-4F25-BD5C-A76BD4FD5A09} = {6818BF07-B62F-4A0C-9404-5CDC5B29ECCD}
 	EndGlobalSection
 EndGlobal
