@@ -16,7 +16,9 @@
       "applicationUrl": "http://localhost:5178",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
-      }
+      },
+      "launchUrl": "http://localhost:5178/swagger",
+      "workingDirectory": ".\\bin\\$(Configuration)\\$(TargetFramework)"
     },
     "https": {
       "commandName": "Project",

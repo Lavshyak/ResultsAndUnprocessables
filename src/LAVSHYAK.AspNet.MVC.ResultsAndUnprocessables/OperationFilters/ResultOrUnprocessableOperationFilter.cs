@@ -39,7 +39,7 @@ public class ResultOrUnprocessableOperationFilter : IOperationFilter
             Schema = context.SchemaGenerator.GenerateSchema(resultType, context.SchemaRepository)
         });
 
-        operation.Responses.Add("200", response200);
+        //operation.Responses.Add("200", response200);
 
         // error
         var errorEnumType = returnType.GenericTypeArguments.Last();

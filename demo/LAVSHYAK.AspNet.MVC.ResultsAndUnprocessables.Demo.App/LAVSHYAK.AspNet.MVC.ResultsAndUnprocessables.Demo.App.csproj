@@ -6,6 +6,14 @@
         <ImplicitUsings>enable</ImplicitUsings>
     </PropertyGroup>
 
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+      <DocumentationFile>bin\Debug\$(TargetFramework)\LAVSHYAK.AspNet.MVC.ResultsAndUnprocessables.Demo.App.xml</DocumentationFile>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+      <DocumentationFile>bin\Release\$(TargetFramework)\LAVSHYAK.AspNet.MVC.ResultsAndUnprocessables.Demo.App.xml</DocumentationFile>
+    </PropertyGroup>
+
     <ItemGroup>
       <ProjectReference Include="..\..\src\LAVSHYAK.AspNet.MVC.ResultsAndUnprocessables\LAVSHYAK.AspNet.MVC.ResultsAndUnprocessables.csproj" />
     </ItemGroup>
