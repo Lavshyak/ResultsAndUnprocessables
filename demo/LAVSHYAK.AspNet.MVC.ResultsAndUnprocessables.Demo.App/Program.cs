@@ -3,6 +3,8 @@ using LAVSHYAK.AspNet.MVC.ResultsAndUnprocessables.OutputFormatters;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.OpenApi.Models;
 
+Console.WriteLine("CWD: " + Directory.GetCurrentDirectory());
+
 var builder = WebApplication.CreateBuilder(args);
 
 var services = builder.Services;
