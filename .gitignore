@@ -369,7 +369,6 @@ FodyWeavers.xsd
 
 # globs
 Makefile.in
-*.userprefs
 *.usertasks
 config.make
 config.status
@@ -450,15 +449,3 @@ $RECYCLE.BIN/
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
-
-##
-## FIDO Conformance Testing Metadata
-##
-demo/WebAuthn.Net.Demo.FidoConformance/ConformanceMetadata/MetadataStatements/*.*
-!demo/WebAuthn.Net.Demo.FidoConformance/ConformanceMetadata/MetadataStatements/.gitkeep
-demo/WebAuthn.Net.Demo.FidoConformance/ConformanceMetadata/Jwt/*
-!demo/WebAuthn.Net.Demo.FidoConformance/ConformanceMetadata/Jwt/.gitkeep
-demo/WebAuthn.Net.Demo.FidoConformance/ConformanceMetadata/RootCertificate/*.*
-!demo/WebAuthn.Net.Demo.FidoConformance/ConformanceMetadata/RootCertificate/.gitkeep
-
-demo/WebAuthn.Net.Demo.Mvc/out/
