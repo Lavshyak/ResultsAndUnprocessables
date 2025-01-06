@@ -6,38 +6,41 @@ namespace LAVSHYAK.AspNet.MVC.ResultsAndUnprocessables.Models;
 public class SuccessOrUnprocessable<TEnumError> : ISuccessOrUnprocessable where TEnumError : Enum
 {
     public bool IsSuccess { get; private set; }
-    public UnprocessableHttpRequestInfo? UnprocessableInfo { get; private set; }
-
-    public object? UnprocessableInfoObject
+    public UnprocessableHttpRequestInfo<TEnumError>? UnprocessableInfo { get; private set; }
+    public object? UnprocessableInfoObject { get=> UnprocessableInfo; }
+    
+    public TEnumError? Error { get; private set; }
+    
+    public static implicit operator SuccessOrUnprocessable<TEnumError>(TEnumError te)
     {
-        get => UnprocessableInfo;
-    }
-
-    public static implicit operator SuccessOrUnprocessable<TEnumError>(TEnumError enumError)
-    {
-        var unprocessableInfo = new UnprocessableHttpRequestInfo()
+        var fieldInfo = EnumDescriptionTools.GetEnumFieldInfo(te);
+        
+        var unprocessableInfo = new UnprocessableHttpRequestInfo<TEnumError>()
         {
-            Code = Convert.ToInt32(enumError),
-            Description = EnumDescriptionTools.GetDescription(enumError)
+            Code = fieldInfo.ValueInt,
+            Name = fieldInfo.Name,
+            Description = fieldInfo.Description,
+            Enum = te
         };
-
-        var successOrUnprocessable = new SuccessOrUnprocessable<TEnumError>
+        
+        var vou = new SuccessOrUnprocessable<TEnumError>
         {
             IsSuccess = false,
-            UnprocessableInfo = unprocessableInfo
+            UnprocessableInfo = unprocessableInfo,
+            Error = te
         };
 
-        return successOrUnprocessable;
+        return vou;
     }
-
-    public static implicit operator SuccessOrUnprocessable<TEnumError>(
-        ClassSuccessForSuccessOrUnprocessable classSuccessForSuccessOrUnprocessable)
+    
+    public static implicit operator SuccessOrUnprocessable<TEnumError>(ClassSuccessForSuccessOrUnprocessable classSuccessForSuccessOrUnprocessable)
     {
-        var successOrUnprocessable = new SuccessOrUnprocessable<TEnumError>
+        var vou = new SuccessOrUnprocessable<TEnumError>
         {
-            IsSuccess = true
+            IsSuccess = true,
+            Error = default
         };
 
-        return successOrUnprocessable;
+        return vou;
     }
 }

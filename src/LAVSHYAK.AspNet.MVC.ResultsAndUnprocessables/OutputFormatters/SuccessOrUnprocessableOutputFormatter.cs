@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using System.Net.Mime;
 using System.Text.Json;
 using LAVSHYAK.AspNet.MVC.ResultsAndUnprocessables.Interfaces;
@@ -12,7 +11,7 @@ public class SuccessOrUnprocessableOutputFormatter : IOutputFormatter
 {
     public bool CanWriteResult(OutputFormatterCanWriteContext context)
     {
-        if(context.Object is ISuccessOrUnprocessable)
+        if (context.ObjectType?.Name == typeof(SuccessOrUnprocessable<>).Name)
         {
             return true;
         }
@@ -24,7 +23,7 @@ public class SuccessOrUnprocessableOutputFormatter : IOutputFormatter
     {
         if (context.Object is not ISuccessOrUnprocessable successOrUnprocessable)
         {
-            throw new UnreachableException();
+            throw new InvalidCastException();
         }
         
         var response = context.HttpContext.Response;

@@ -47,8 +47,7 @@ public class FileResultOperationFilter : IOperationFilter
         }
 
         response200.Headers.Add("Content-Type",
-            new OpenApiHeader()
-                {Description = "Type of the content.", Example = new OpenApiString("application/octet-stream")});
+            new OpenApiHeader() {Description = "Type of the content.", Example = new OpenApiString("application/octet-stream")});
         response200.Headers.Add("Content-Length",
             new OpenApiHeader() {Description = "Body length in bytes.", Example = new OpenApiInteger(200)});
     }

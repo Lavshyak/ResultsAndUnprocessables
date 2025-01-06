@@ -10,6 +10,16 @@ namespace LAVSHYAK.AspNet.MVC.ResultsAndUnprocessables.OutputFormatters;
 
 public class ResultOrUnprocessableOutputFormatter : IOutputFormatter
 {
+
+    private static readonly PropertyInfo ObjectPropertyInfo;
+    private static readonly PropertyInfo ObjectTypePropertyInfo;
+    static ResultOrUnprocessableOutputFormatter()
+    {
+        var t = typeof(OutputFormatterCanWriteContext);
+        ObjectPropertyInfo = t.GetProperty("Object") ?? throw new MissingMemberException();
+        ObjectTypePropertyInfo = t.GetProperty("ObjectType") ?? throw new MissingMemberException();
+    }
+    
     public bool CanWriteResult(OutputFormatterCanWriteContext context)
     {
         if (context.Object is not IResultOrUnprocessable resultOrUnprocessable)
@@ -19,6 +29,10 @@ public class ResultOrUnprocessableOutputFormatter : IOutputFormatter
 
         if (resultOrUnprocessable.IsSuccess)
         {
+            //поменять обьект ответа, чтобы асп нет его сам записал в ответ обычным способом
+            ObjectPropertyInfo.SetValue(context, resultOrUnprocessable.ResultObject);
+            ObjectTypePropertyInfo.SetValue(context, resultOrUnprocessable.ResultObject?.GetType());
+            
             return false;
         }
 
@@ -31,9 +45,9 @@ public class ResultOrUnprocessableOutputFormatter : IOutputFormatter
         {
             throw new InvalidCastException();
         }
-
+        
         var response = context.HttpContext.Response;
-
+        
         if (!resultOrUnprocessable.IsSuccess)
         {
             var serialized = JsonSerializer.Serialize(resultOrUnprocessable.UnprocessableInfoObject);
@@ -43,9 +57,11 @@ public class ResultOrUnprocessableOutputFormatter : IOutputFormatter
         }
         else
         {
-            // ResultOrUnprocessableOperationFilter replaces resultOrUnprocessable
-            // with TOnSuccess if resultOrUnprocessable.IsSuccess is true
             throw new UnreachableException();
+            var serialized = JsonSerializer.Serialize(resultOrUnprocessable.ResultObject);
+            response.StatusCode = StatusCodes.Status200OK;
+            response.ContentType = MediaTypeNames.Application.Json;
+            await response.WriteAsync(serialized);
         }
     }
 }

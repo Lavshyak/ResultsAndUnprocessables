@@ -6,39 +6,57 @@ namespace LAVSHYAK.AspNet.MVC.ResultsAndUnprocessables.Models;
 public class ResultOrUnprocessable<TOnSuccess, TEnumError> : IResultOrUnprocessable where TEnumError : Enum
 {
     public bool IsSuccess { get; private set; }
-    
+
     public TOnSuccess? Result { get; private set; }
-    public UnprocessableHttpRequestInfo? UnprocessableInfo { get; private set; }
+    public UnprocessableHttpRequestInfo<TEnumError>? UnprocessableInfo { get; private set; }
+    
+    public TEnumError? Error { get; private set; }
 
     public object? ResultObject => Result;
     public object? UnprocessableInfoObject => UnprocessableInfo;
 
-    public static implicit operator ResultOrUnprocessable<TOnSuccess, TEnumError>(TEnumError enumError)
+    public enum SomeErrors
     {
-        var unprocessableInfo = new UnprocessableHttpRequestInfo()
+        A
+    }
+
+    public ResultOrUnprocessable<int, SomeErrors> A()
+    {
+        ResultOrUnprocessable<int, SomeErrors> c = null;
+        return null;
+    }
+
+    public static implicit operator ResultOrUnprocessable<TOnSuccess, TEnumError>(TEnumError te)
+    {
+        var fieldInfo = EnumDescriptionTools.GetEnumFieldInfo(te);
+        
+        var unprocessableInfo = new UnprocessableHttpRequestInfo<TEnumError>()
         {
-            Code = Convert.ToInt32(enumError),
-            Description = EnumDescriptionTools.GetDescription(enumError)
+            Code = fieldInfo.ValueInt,
+            Name = fieldInfo.Name,
+            Description = fieldInfo.Description,
+            Enum = te
         };
 
-        var resultOrUnprocessable = new ResultOrUnprocessable<TOnSuccess, TEnumError>
+        var roe = new ResultOrUnprocessable<TOnSuccess, TEnumError>
         {
             Result = default,
             IsSuccess = false,
-            UnprocessableInfo = unprocessableInfo
+            UnprocessableInfo = unprocessableInfo,
+            Error = te
         };
 
-        return resultOrUnprocessable;
+        return roe;
     }
 
-    public static implicit operator ResultOrUnprocessable<TOnSuccess, TEnumError>(TOnSuccess onSuccess)
+    public static implicit operator ResultOrUnprocessable<TOnSuccess, TEnumError>(TOnSuccess tr)
     {
-        var resultOrUnprocessable = new ResultOrUnprocessable<TOnSuccess, TEnumError>
+        var roe = new ResultOrUnprocessable<TOnSuccess, TEnumError>
         {
-            Result = onSuccess,
-            IsSuccess = true,
+            Result = tr,
+            IsSuccess = true
         };
 
-        return resultOrUnprocessable;
+        return roe;
     }
 }

@@ -8,65 +8,80 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace LAVSHYAK.AspNet.MVC.ResultsAndUnprocessables.EnumTools;
 
-internal static class EnumDescriptionTools
+public record EnumFieldInfo(int ValueInt, string Name, string Description);
+
+internal static class EnumDescriptions<TEnum> where TEnum : Enum
 {
-    private static readonly Dictionary<string, Dictionary<int, string>> Cache = new();
+    // ReSharper disable once StaticMemberInGenericType
+    private static readonly IReadOnlyList<EnumFieldInfo> EnumFieldInfos;
 
-
-    public static string GetDescription<TEnum>(TEnum value) where TEnum : Enum
+    static EnumDescriptions()
     {
-        // Get the type
         var type = typeof(TEnum);
-
-        var fullName = type.FullName ?? throw new UnreachableException();
-
-        var found = Cache.TryGetValue(fullName, out var dict);
-
-        if (found)
-            return dict![Convert.ToInt32(value)];
-
-        dict = new Dictionary<int, string>();
-
         var fields = type.GetFields().Where(field => field.FieldType.FullName != typeof(Int32).FullName).ToArray();
+        var enumFieldInfos = new EnumFieldInfo[fields.Length];
+        
         for (var i = 0; i < fields.Length; i++)
         {
-            var description = fields[i].GetCustomAttribute<DescriptionAttribute>();
-            dict.Add(i, description?.Description ?? fields[i].Name);
-        }
-        
-        Cache[fullName] = dict;
+            var field = fields[i];
 
-        return dict[Convert.ToInt32(value)];
+            var value = (TEnum) field.GetRawConstantValue()!;
+            var valueInt = Convert.ToInt32(value);
+            if (valueInt != i)
+                throw new UnreachableException("Что-то пошло не так)");
+
+            var name = field.Name;
+            
+            var descriptionAttribute = field.GetCustomAttribute<DescriptionAttribute>();
+            var description = descriptionAttribute?.Description;
+            if (string.IsNullOrWhiteSpace(description))
+                description = name;
+            
+            var enumFieldInfo =
+                new EnumFieldInfo(valueInt, name, description);
+            enumFieldInfos[i] = enumFieldInfo;
+        }
+
+        EnumFieldInfos = enumFieldInfos; //new string[fields.Length];
     }
 
-    public static OpenApiResponse? GetResponseForOpenApi(Type errorEnumType, OperationFilterContext context)
+    public static EnumFieldInfo GetDescription(TEnum value) => EnumFieldInfos[Convert.ToInt32(value)];
+
+    public static IEnumerable<EnumFieldInfo> GetDescriptions() => EnumFieldInfos;
+}
+
+internal static class EnumDescriptionTools
+{
+    public static EnumFieldInfo GetEnumFieldInfo<TEnum>(TEnum value) where TEnum : Enum
+    {
+        return EnumDescriptions<TEnum>.GetDescription(value);
+    }
+
+    public static OpenApiResponse GetResponseForOpenApi(Type errorEnumType, OperationFilterContext context)
     {
         if (errorEnumType.BaseType?.FullName != "System.Enum")
         {
-            throw new ArgumentException("Should be System.Enum", nameof(errorEnumType));
+            throw new ArgumentException();
         }
 
-        var props = errorEnumType.GetFields().Skip(1).ToArray();
+        var enumDescriptionType = typeof(EnumDescriptions<>).MakeGenericType(errorEnumType);
+        var method = enumDescriptionType.GetMethod("GetDescriptions") ?? throw new UnreachableException();
+        var invokeResult = method.Invoke(null, null) ?? throw new UnreachableException();
+        var descriptions = ((IEnumerable<EnumFieldInfo>) invokeResult).ToArray();
 
-        if (props.Length == 0)
-            return null;
+        var strings = descriptions.Select(enumFieldInfo =>
+            $"{enumFieldInfo.ValueInt} : {enumFieldInfo.Name} : {enumFieldInfo.Description}");
 
+        var firstDescription = descriptions.First();
 
-        List<string> descriptions = [];
-        foreach (var propertyInfo in props)
-        {
-            var descriptionAttribute = propertyInfo.GetCustomAttribute<DescriptionAttribute>();
-            descriptions.Add(descriptionAttribute is not null ? descriptionAttribute.Description : propertyInfo.Name);
-        }
-
-        var strings = descriptions.Select((d, i) => $"{i} : {d}");
         var response = new OpenApiResponse
         {
             Description = string.Join("<br/>", strings)
         };
-        response.Content.Add("application/json", new OpenApiMediaType
+
+        var newOpenApiMediaType = new OpenApiMediaType
         {
-            Schema = context.SchemaGenerator.GenerateSchema(typeof(UnprocessableHttpRequestInfo),
+            Schema = context.SchemaGenerator.GenerateSchema(typeof(UnprocessableHttpRequestInfo<>).MakeGenericType(errorEnumType),
                 context.SchemaRepository),
             Examples =
             {
@@ -74,13 +89,18 @@ internal static class EnumDescriptionTools
                 {
                     Value = new OpenApiObject()
                     {
-                        [nameof(UnprocessableHttpRequestInfo.Code).ToLower()] = new OpenApiInteger(0),
-                        [nameof(UnprocessableHttpRequestInfo.Description).ToLower()] =
-                            new OpenApiString(descriptions.First()),
+                        [nameof(UnprocessableHttpRequestInfo<Enum>.Code).ToLower()] =
+                            new OpenApiInteger(firstDescription.ValueInt),
+                        [nameof(UnprocessableHttpRequestInfo<Enum>.Name).ToLower()] =
+                            new OpenApiString(firstDescription.Name),
+                        [nameof(UnprocessableHttpRequestInfo<Enum>.Description).ToLower()] =
+                            new OpenApiString(firstDescription.Description),
                     }
                 }
             }
-        });
+        };
+        
+        response.Content.Add("application/json", newOpenApiMediaType);
 
         return response;
     }

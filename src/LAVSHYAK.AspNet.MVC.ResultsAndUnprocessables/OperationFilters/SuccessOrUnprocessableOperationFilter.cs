@@ -11,8 +11,7 @@ public class SuccessOrUnprocessableOperationFilter : IOperationFilter
     {
         var returnType = context.MethodInfo.ReturnType;
 
-        var taskType = typeof(Task<>);
-        if (returnType.Name == taskType.Name && returnType.Namespace == taskType.Namespace)
+        if (returnType.Name == typeof(Task<>).Name)
         {
             returnType = returnType.GenericTypeArguments.First();
         }
@@ -23,6 +22,17 @@ public class SuccessOrUnprocessableOperationFilter : IOperationFilter
             return;
         }
 
+        var enumErrorCodesSchemaKey =
+            returnType.GenericTypeArguments.First().Name;
+        //context.SchemaRepository.Schemas.Remove(enumErrorCodesSchemaKey);
+        
+        /*// название, которое получается из SuccessOrUnprocessable<EnumErrorCodesT>
+        var enumErrorCodesSchemaKeySuccessOrUnprocessableSchemaKey =
+            enumErrorCodesSchemaKey + "ResultOrUnprocessable";
+
+        context.SchemaRepository.Schemas.Remove(
+            enumErrorCodesSchemaKeySuccessOrUnprocessableSchemaKey);*/
+        
         if (!operation.Responses.TryGetValue("200", out var response200))
         {
             response200 = new OpenApiResponse();
@@ -40,7 +50,7 @@ public class SuccessOrUnprocessableOperationFilter : IOperationFilter
         // error
         var errorEnumType = returnType.GenericTypeArguments.First();
 
-        const string key = "422";
+        string key = "422";
         var response = EnumDescriptionTools.GetResponseForOpenApi(errorEnumType, context);
 
         if (response is null)

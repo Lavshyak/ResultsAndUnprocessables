@@ -10,9 +10,8 @@ public class ResultOrUnprocessableOperationFilter : IOperationFilter
     public void Apply(OpenApiOperation operation, OperationFilterContext context)
     {
         var returnType = context.MethodInfo.ReturnType;
-        
-        var taskType = typeof(Task<>);
-        if (returnType.Name == taskType.Name && returnType.Namespace == taskType.Namespace)
+
+        if (returnType.Name == typeof(Task<>).Name)
         {
             returnType = returnType.GenericTypeArguments.First();
         }
@@ -22,6 +21,21 @@ public class ResultOrUnprocessableOperationFilter : IOperationFilter
         {
             return;
         }
+
+
+        var enumErrorCodesSchemaKey =
+            returnType.GenericTypeArguments.Last().Name;
+        //context.SchemaRepository.Schemas.Remove(enumErrorCodesSchemaKey);
+
+        var successResultSchemaKey =
+            returnType.GenericTypeArguments.First().Name;
+
+        /*// название, которое получается из ResultOrUnprocessable<SuccessResultT, EnumErrorCodesT>
+        var successResultSchemaKeyEnumErrorCodesSchemaKeyResultOrUnprocessableSchemaKey =
+            successResultSchemaKey + enumErrorCodesSchemaKey + "ResultOrUnprocessable";
+
+        context.SchemaRepository.Schemas.Remove(
+            successResultSchemaKeyEnumErrorCodesSchemaKeyResultOrUnprocessableSchemaKey);*/
 
         operation.Responses.Clear();
 
