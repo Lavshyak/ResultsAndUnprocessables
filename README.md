@@ -1,3 +1,5 @@
+# For community: 
+You can change the namespace, repository names and projects. I can add contributors or transfer a repository.
 # LAVSHYAK.AspNet.MVC.ResultsAndUnprocessables
 Either analog for endpoints. Auto swagger documentation.
 Returns 200 + model in body if succes. 422 + error info in body if unprocessable.
