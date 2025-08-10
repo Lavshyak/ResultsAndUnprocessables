@@ -1,5 +1,5 @@
 # For community: 
-You can change the namespace, repository names and projects. The owner in the LECINSE can be changed towards the community.
+You can change the namespace, repository names and projects. The owner in the LICENSE can be changed towards the community.
 # LAVSHYAK.AspNet.MVC.ResultsAndUnprocessables
 Either analog for endpoints. Auto swagger documentation.
 Returns 200 + model in body if succes. 422 + error info in body if unprocessable.
