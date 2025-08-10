@@ -96,5 +96,5 @@ public class DevController : ControllerBase
     }
 }
 ```
-Generated docs example:
+Generated docs example:\
 <img width="803" height="879" alt="изображение" src="https://github.com/user-attachments/assets/23fde683-78ff-46ab-8346-279397108a06" />
