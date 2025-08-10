@@ -4,6 +4,9 @@ namespace LAVSHYAK.AspNet.MVC.ResultsAndUnprocessables.Models;
 
 public class UnprocessableHttpRequestInfo<TEnum> where TEnum : Enum
 {
+    /// <summary>
+    /// It is not HTTP status code, it is enum's value.
+    /// </summary>
     [JsonPropertyName("code")]
     public required int Code { get; set; }
     
