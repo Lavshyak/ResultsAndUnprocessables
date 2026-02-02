@@ -9,7 +9,7 @@ AddControllers setup example on configuring builder:
 ```csharp
 services.AddControllers(options =>
 		{
-			options.OutputFormatters.RemoveType<StringOutputFormatter>(); // suddenly it won't work without it
+			options.OutputFormatters.RemoveType<StringOutputFormatter>(); // suddenly it won't work without this line
 			options.OutputFormatters.Insert(0, new SuccessOrUnprocessableOutputFormatter());
 			options.OutputFormatters.Insert(0, new ResultOrUnprocessableOutputFormatter());
 		});
