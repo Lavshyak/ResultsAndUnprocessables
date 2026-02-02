@@ -6,7 +6,7 @@ Either analog for endpoints. Auto swagger documentation.
 Returns 200 + model in body if succes. 422 + error info in body if unprocessable.
 
 AddControllers setup example on configuring builder:
-```
+```csharp
 services.AddControllers(options =>
 		{
 			options.OutputFormatters.RemoveType<StringOutputFormatter>(); // suddenly it won't work without it
@@ -16,7 +16,7 @@ services.AddControllers(options =>
 ```
 
 swagger setup example on configuring builder:
-```
+```csharp
 services.AddEndpointsApiExplorer();
 			services.AddSwaggerGen(options =>
 			{
@@ -33,12 +33,12 @@ services.AddEndpointsApiExplorer();
 ```
 
 your .csproj
-```
+```xml
 <ItemGroup> <Using Include="LAVSHYAK.AspNet.MVC.ResultsAndUnprocessables.Globals"> <Static>True</Static> </Using> </ItemGroup>
 ```
 
 Controller example:
-```
+```csharp
 [ApiController]
 [Route("[controller]/[action]")]
 public class DevController : ControllerBase
